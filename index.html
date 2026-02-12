@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Comelón: El Gourmet RGB</title>
+    <title>Comelón: Invasión de Fantasmas Gigantes</title>
     <style>
         body { margin: 0; padding: 0; background-color: #000; overflow: hidden; font-family: 'Courier New', Courier, monospace; }
         canvas { display: block; }
@@ -51,7 +51,7 @@
 
     <div id="overlay">
         <h1 style="letter-spacing: 15px; color: #00ffcc; font-size: 60px; text-shadow: 0 0 20px #00ffcc;">COMELÓN</h1>
-        <p style="color: white;">Fantasmas: +1 Grito | Sodas: -2 Digestión</p>
+        <p style="color: white;">¡Los fantasmas gigantes se mueven! Digiere para sobrevivir.</p>
         <button onclick="iniciarJuego()">INICIAR SISTEMA</button>
     </div>
 
@@ -81,8 +81,8 @@ const mensajeFinal = document.getElementById('mensaje-final');
 let width, height;
 let mouse = { x: 0, y: 0 };
 let head = { x: 0, y: 0 };
-let score = 0; // Bio-masa actual
-let totalDigeridos = 0; // Contador de fantasmas digeridos
+let score = 0; 
+let totalDigeridos = 0;
 let juegoIniciado = false;
 let estado = "jugando"; 
 let factorGordo = 1;
@@ -119,8 +119,8 @@ class Refresco {
     spawn() {
         this.x = Math.random() * (width - 100) + 50;
         this.y = Math.random() * (height - 100) + 50;
-        this.vx = (Math.random() - 0.5) * 10;
-        this.vy = (Math.random() - 0.5) * 10;
+        this.vx = (Math.random() - 0.5) * 8;
+        this.vy = (Math.random() - 0.5) * 8;
         this.alive = true;
     }
     update() {
@@ -147,29 +147,41 @@ class Fantasma {
     spawn() {
         this.x = Math.random() * (width - 100) + 50;
         this.y = Math.random() * (height - 100) + 50;
+        this.vx = (Math.random() - 0.5) * 4; // Movimiento del fantasma
+        this.vy = (Math.random() - 0.5) * 4;
         this.color = coloresFantasmas[Math.floor(Math.random() * coloresFantasmas.length)];
+        this.size = 20; // 130% aproximadamente (de 15 a 20)
         this.alive = true;
+    }
+    update() {
+        if (!this.alive) return;
+        this.x += this.vx; this.y += this.vy;
+        if (this.x < this.size || this.x > width - this.size) this.vx *= -1;
+        if (this.y < this.size || this.y > height - this.size) this.vy *= -1;
     }
     draw() {
         if (!this.alive) return;
         ctx.save();
-        ctx.shadowBlur = 10; ctx.shadowColor = this.color;
+        ctx.shadowBlur = 15; ctx.shadowColor = this.color;
         ctx.fillStyle = this.color;
         ctx.beginPath();
-        ctx.arc(this.x, this.y, 15, Math.PI, 0);
-        ctx.lineTo(this.x + 15, this.y + 20);
-        ctx.lineTo(this.x - 15, this.y + 20);
+        // Cabeza gigante
+        ctx.arc(this.x, this.y, this.size, Math.PI, 0);
+        ctx.lineTo(this.x + this.size, this.y + 25);
+        ctx.lineTo(this.x - this.size, this.y + 25);
         ctx.fill();
-        // Ojos
+        
+        // Ojos proporcionales
         ctx.fillStyle = "white";
         ctx.beginPath();
-        ctx.arc(this.x - 6, this.y - 2, 4, 0, Math.PI * 2);
-        ctx.arc(this.x + 6, this.y - 2, 4, 0, Math.PI * 2);
+        ctx.arc(this.x - 8, this.y - 4, 6, 0, Math.PI * 2);
+        ctx.arc(this.x + 8, this.y - 4, 6, 0, Math.PI * 2);
         ctx.fill();
+        
         ctx.fillStyle = "black";
         ctx.beginPath();
-        ctx.arc(this.x - 6, this.y - 2, 2, 0, Math.PI * 2);
-        ctx.arc(this.x + 6, this.y - 2, 2, 0, Math.PI * 2);
+        ctx.arc(this.x - 8, this.y - 4, 3, 0, Math.PI * 2);
+        ctx.arc(this.x + 8, this.y - 4, 3, 0, Math.PI * 2);
         ctx.fill();
         ctx.restore();
     }
@@ -234,11 +246,11 @@ head.x = width/2; head.y = height/2;
 for (let i = 0; i < numSegmentosMinimo; i++) {
     segmentos.push(new Segmento(head.x, head.y, i));
 }
-for (let i = 0; i < 4; i++) fantasmas.push(new Fantasma());
+for (let i = 0; i < 5; i++) fantasmas.push(new Fantasma());
 for (let i = 0; i < 2; i++) refrescos.push(new Refresco());
 
 function animate() {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
+    ctx.fillStyle = "rgba(0, 0, 0, 0.4)";
     ctx.fillRect(0, 0, width, height);
     hueBase += 3;
 
@@ -251,10 +263,12 @@ function animate() {
             if (factorGordo > 8) reventar();
         }
 
+        // Fantasmas actualización y colisión
         fantasmas.forEach(f => {
             if (!f.alive || estado === "inflando") return;
+            f.update();
             f.draw();
-            if (Math.hypot(head.x - f.x, head.y - f.y) < 30) {
+            if (Math.hypot(head.x - f.x, head.y - f.y) < 35) {
                 f.alive = false;
                 score++;
                 scoreEl.innerText = score;
@@ -266,20 +280,20 @@ function animate() {
             }
         });
 
+        // Refrescos actualización y colisión
         refrescos.forEach(r => {
             if (!r.alive || estado === "inflando") return;
             r.update(); r.draw();
             if (Math.hypot(head.x - r.x, head.y - r.y) < 35) {
                 r.alive = false;
-                // Lógica de digestión
                 if (score > 0) {
-                    let cantADigerir = Math.min(score, 2);
-                    score -= cantADigerir;
-                    totalDigeridos += cantADigerir;
+                    let cant = Math.min(score, 2);
+                    score -= cant;
+                    totalDigeridos += cant;
                     scoreEl.innerText = score;
                     digeridosEl.innerText = totalDigeridos;
                 }
-                for(let j=0; j<30; j++) { 
+                for(let j=0; j<35; j++) { 
                     if(segmentos.length > numSegmentosMinimo) segmentos.pop(); 
                 }
                 setTimeout(() => r.spawn(), 4000);
@@ -304,7 +318,7 @@ function animate() {
 
 function reventar() {
     estado = "explotado";
-    document.getElementById('estadisticas-finales').innerHTML = `Lograste digerir <b>${totalDigeridos}</b> fantasmas antes del BOOM.`;
+    document.getElementById('estadisticas-finales').innerHTML = `Lograste digerir <b>${totalDigeridos}</b> fantasmas.`;
     segmentos.forEach(seg => {
         for(let i=0; i<15; i++) {
             particulas.push({
