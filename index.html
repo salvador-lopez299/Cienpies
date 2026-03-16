@@ -8,8 +8,9 @@
         body {
             margin: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #ff758c, #ff7eb3);
-            color: white;
+            /* Degradado mucho menos rosa, más sutil y elegante */
+            background: linear-gradient(135deg, #fff5f6, #ffeaef); 
+            color: #333; /* Texto oscuro para mejor contraste sobre fondo claro */
             height: 100vh;
             display: flex;
             flex-direction: column;
@@ -19,6 +20,55 @@
             overflow: hidden;
             -webkit-tap-highlight-color: transparent;
             user-select: none;
+            position: relative;
+        }
+
+        /* Pantalla de Inicio */
+        #pantalla-inicio {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #fff5f6, #ffeaef);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transition: opacity 0.5s ease;
+        }
+
+        #pantalla-inicio h1 {
+            font-size: 2.5em;
+            color: #ff758c;
+            margin-bottom: 20px;
+        }
+
+        #boton-empezar {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            background-color: #ff758c;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: background-color 0.3s ease;
+        }
+
+        #boton-empezar:hover {
+            background-color: #ff4f6a;
+        }
+
+        /* Contenido Principal (oculto al inicio) */
+        #contenido {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
         }
 
         #contenedor {
@@ -31,7 +81,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: opacity 0.4s ease; /* Animación de desvanecido simple */
+            transition: opacity 0.4s ease;
             z-index: 10;
         }
 
@@ -39,6 +89,7 @@
             margin-top: 10px;
             font-size: 0.8em;
             opacity: 0.7;
+            color: #888;
             animation: latido 2s infinite;
             z-index: 10;
         }
@@ -47,7 +98,8 @@
             margin-top: 40px;
             font-size: 1.1em;
             font-weight: bold;
-            background: rgba(0, 0, 0, 0.2);
+            color: #555;
+            background: rgba(255, 255, 255, 0.5);
             padding: 15px 25px;
             border-radius: 20px;
             z-index: 10;
@@ -56,9 +108,9 @@
 
         .corazon {
             position: absolute;
-            color: white;
+            color: #ff758c; /* Corazones rosa suave */
             animation: flotar 6s linear infinite;
-            opacity: 0.6;
+            opacity: 0.5;
             z-index: 1;
         }
 
@@ -74,15 +126,22 @@
         }
     </style>
 </head>
-<body onclick="siguiente()">
+<body>
 
-    <audio id="musicaFondo" loop>
-        <source src="cancion.mp3" type="audio/mpeg">
-    </audio>
+    <div id="pantalla-inicio">
+        <h1>Nuestra Historia ❤️</h1>
+        <button id="boton-empezar" onclick="empezar()">Tocar para empezar</button>
+    </div>
 
-    <div id="contenedor"></div>
-    <div id="indicacion">toca la pantalla para continuar</div>
-    <div id="contador"></div>
+    <div id="contenido" onclick="siguiente()">
+        <audio id="musicaFondo" loop>
+            <source src="cancion.mp3" type="audio/mpeg">
+        </audio>
+
+        <div id="contenedor"></div>
+        <div id="indicacion">toca la pantalla para continuar</div>
+        <div id="contador"></div>
+    </div>
 
     <script>
         const textos = [
@@ -90,13 +149,13 @@
             "En ese momento no sabía que ese pequeño momento iba a cambiar tantas cosas.",
             "Mientras me explicabas, no podía evitar fijarme en ti… en tu carita, en tus manos, y en tu voz.",
             "Tal vez solo fue una excusa para hablar contigo, pero me alegra mucho que lo haya hecho.",
-            "Después de ese día me gustaba saber que existia en tu mundo.",
+            "Después de ese día me gustaba saber que existías en mi mundo.",
             "Y que cuando te sonreía, tú también me sonreías.",
-            "Cuando te acercarste más.",
-            "Me dijiste que no había preguntado tu nombre y que tampoco te había dicho el mío, me dio mucha alegría.",
+            "Fuiste tú quien empezó a acercarse más.",
+            "Cuando dijiste que no había preguntado tu nombre y que querías saber el mío, me dio mucha alegría.",
             "Por primera vez hablamos de cosas que no eran solo de la escuela.",
             "Y ese día me quedé pensando mucho en lo que había pasado.",
-            "Después coincidimos otra vez… y recuerdo muy bien tu vestido rosa con flores, te invite a comer y no quisiste.",
+            "Después coincidimos otra vez… y recuerdo muy bien tu vestido rosa con flores.",
             "Cada vez hablábamos más.",
             "En la biblioteca me preguntaste mi número, te di mi teléfono y te agregaste a mis contactos *Belén*.",
             "Desde ahí empezamos a compartir más tiempo juntos.",
@@ -105,11 +164,11 @@
             "Después dejamos de vernos por un buen rato.",
             "Pero empezamos a hablar por mensajes, por las noches jugábamos y platicábamos.",
             "Aunque solo éramos amigos, ya sentía que eras especial.",
-            "Después volvimos a vernos y por los nervios solo pude decirte que tus tenis estaban bonitos cosa que también era verdad.",
+            "Después volvimos a vernos y por los nervios solo pude decirte que tus tenis estaban bonitos cosa que también es verdad.",
             "Fuimos por un café… aunque lo importante realmente fue caminar contigo.",
             "Y sentir por primera vez que me tomabas del brazo.",
             "Cada vez que te veía pensaba que estabas más bonita que el día anterior.",
-            "Se acercaba navidad y recuerdo con cariño el abrazo con el que nos despedimos ese día que fuimos por primera vez a comer a Perisur.",
+            "Se acercaba navidad y recuerdo con cariño el abrazo con el que nos despedimos ese día que fuimos por primera vez a Perisur.",
             "Después salimos otra vez…",
             "Y ese día nos tomamos de la mano por primera vez ❤️.",
             "Cuando me abrazaste no quería que ese momento terminara.",
@@ -122,11 +181,11 @@
             "Y sentí que todo era una montaña de emociones.",
             "Hubo un día en que por fin me quité la pena y te abracé.",
             "Te cargué, te hice cosquillas…",
-            "No sabía cómo ibas a reaccionar, pero igual lo hice.",
+            "Y tú dijiste que ojalá existiera un control para detener el tiempo.",
             "Después llegó el 14 de febrero.",
             "Yo estaba nervioso y pensaba muchas cosas.",
-            "Cuando me diste tu carta no sabía qué esperar.",
-            "Pero cuando entendí que lo que decia era en serio… me sentí muy feliz.",
+            "Cuando me pediste leer tu carta no sabía qué esperar.",
+            "Pero cuando entendí que lo decías en serio… me sentí muy feliz.",
             "Porque descubrí que lo que sentía por ti también existía en tu corazón.",
             "Disfruté mucho ese camino abrazándote.",
             "Y sentir tu manita con la mía.",
@@ -143,26 +202,33 @@
             "Gracias por existir.",
             "Gracias por aceptarme en tu vida.",
             "Y gracias por cada momento que hemos compartido.",
-            "Te quiero mucho❤️"
+            "Te quiero mucho ❤️"
         ];
 
         let i = 0;
-        let musicaIniciada = false;
         const contenedor = document.getElementById("contenedor");
         const musica = document.getElementById("musicaFondo");
+        const pantallaInicio = document.getElementById("pantalla-inicio");
+        const contenido = document.getElementById("contenido");
         
-        // Inicializar
+        // Inicializar texto
         contenedor.innerText = textos[i];
 
-        function siguiente() {
-            // Música
-            if (!musicaIniciada) {
+        // Función para empezar la historia
+        function empezar() {
+            pantallaInicio.style.opacity = 0;
+            setTimeout(() => {
+                pantallaInicio.style.display = 'none';
+                contenido.style.display = 'flex';
                 musica.play();
-                musicaIniciada = true;
-            }
+                actualizarContador();
+                setInterval(crearCorazon, 800);
+            }, 500);
+        }
 
+        // Función para avanzar en la historia
+        function siguiente() {
             if (i < textos.length - 1) {
-                // Efecto de cambio suave
                 contenedor.style.opacity = 0;
                 setTimeout(() => {
                     i++;
@@ -172,6 +238,7 @@
             }
         }
 
+        // Contador
         const inicio = new Date("September 3, 2025 16:45:00").getTime();
         function actualizarContador() {
             const ahora = new Date().getTime();
@@ -183,8 +250,8 @@
             document.getElementById("contador").innerHTML = "Llevamos:<br>" + dias + " días, " + horas + "h " + minutos + "m " + segundos + "s";
         }
         setInterval(actualizarContador, 1000);
-        actualizarContador();
 
+        // Corazones
         function crearCorazon() {
             const corazon = document.createElement("div");
             corazon.classList.add("corazon");
@@ -194,7 +261,6 @@
             document.body.appendChild(corazon);
             setTimeout(() => { corazon.remove(); }, 6000);
         }
-        setInterval(crearCorazon, 800);
     </script>
 </body>
 </html>
