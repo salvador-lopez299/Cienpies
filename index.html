@@ -6,22 +6,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;700&family=Sacramento&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Paleta de colores suaves y sofisticados */
-            --primary-bg: #fff8f8; /* Soft Blush/Pearl */
-            --secondary-bg: #ffe0e0; /* Champagne/Rosé */
-            --card-bg: rgba(255, 255, 255, 0.4); /* Glassmorphism card */
-            --text-color: #3d1f1f; /* Darker, softer Brown/Purple */
-            --accent-color: #ff8fa2; /* Soft Pink accents */
+            --primary-bg: #fff8f8;
+            --secondary-bg: #ffe0e0;
+            --card-bg: rgba(255, 255, 255, 0.4);
+            --text-color: #3d1f1f;
+            --accent-color: #ff8fa2;
             --font-body: 'Crimson Text', serif;
             --font-script: 'Sacramento', cursive;
         }
 
         body {
-            /* --- ESTAS DOS LÍNEAS QUITAN EL DESTELLO AZUL Y LA SELECCIÓN DE TEXTO --- */
             -webkit-tap-highlight-color: transparent;
             user-select: none; 
-            /* ------------------------------------------------------------------------ */
-            
             margin: 0;
             font-family: var(--font-body);
             color: var(--text-color);
@@ -33,11 +29,9 @@
             text-align: center;
             overflow: hidden;
             position: relative;
-            cursor: pointer; /* Indica que se puede interactuar */
             background: linear-gradient(135deg, var(--primary-bg), var(--secondary-bg));
         }
 
-        /* Partículas Mágicas detrás de la tarjeta */
         #particulas {
             position: absolute;
             width: 100%;
@@ -45,25 +39,24 @@
             top: 0;
             left: 0;
             z-index: 1;
-            pointer-events: none; /* No bloquea clics */
+            pointer-events: none;
         }
 
         .particula {
             position: absolute;
-            background: rgba(255, 143, 162, 0.3); /* Soft pink sparkles */
+            background: rgba(255, 143, 162, 0.3);
             border-radius: 50%;
             animation: flotarParticula 15s linear infinite;
         }
 
-        /* Tarjeta de Cristal refinada */
         #tarjeta {
             background: var(--card-bg);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border-radius: 30px;
-            padding: 60px 40px;
-            max-width: 650px;
-            width: 90%;
+            padding: 40px 30px;
+            max-width: 600px;
+            width: 85%;
             box-shadow: 0 15px 45px rgba(0, 0, 0, 0.08);
             border: 1px solid rgba(255, 255, 255, 0.6);
             z-index: 10;
@@ -71,69 +64,50 @@
             flex-direction: column;
             justify-content: center;
             min-height: 250px;
-            perspective: 1500px; /* Para efecto 3D en las hojas */
-            transition: transform 0.3s ease;
+            perspective: 1500px;
+            /* Subimos un poquito la tarjeta para dar espacio al contador abajo */
+            margin-bottom: 20px;
         }
 
-        /* Animación suave al pasar el ratón por encima (feedback) */
-        #tarjeta:hover {
-            transform: translateY(-5px);
-        }
-
-        /* Contenedor del texto con animación de hoja */
         #contenedor {
-            font-size: 1.6em;
-            line-height: 1.8;
+            font-size: 1.5em;
+            line-height: 1.6;
             transition: opacity 0.5s ease, transform 0.5s ease;
-            transform-origin: left; /* Gira como un libro */
+            transform-origin: left;
         }
 
-        /* Estados de la animación de "hoja" */
-        .hoja-actual { 
-            opacity: 1; 
-            transform: rotateY(0deg) scale(1); 
-        }
-        .hoja-sale { 
-            opacity: 0; 
-            transform: rotateY(-90deg) scale(0.9); 
-        }
-        .hoja-entra { 
-            opacity: 0; 
-            transform: rotateY(90deg) scale(1.1); 
-        }
+        .hoja-actual { opacity: 1; transform: rotateY(0deg) scale(1); }
+        .hoja-sale { opacity: 0; transform: rotateY(-90deg) scale(0.9); }
+        .hoja-entra { opacity: 0; transform: rotateY(90deg) scale(1.1); }
 
-        /* Animación de entrada para el nuevo texto (cada frase se forma) */
+        .texto-llegando { animation: formarFrase 0.8s ease forwards; }
+
         @keyframes formarFrase {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .texto-llegando {
-            animation: formarFrase 0.8s ease forwards;
-        }
-
         #indicacion {
-            margin-top: 40px;
-            font-size: 0.9em;
-            opacity: 0.8;
+            margin-top: 20px;
+            font-size: 0.8em;
+            opacity: 0.6;
             color: var(--accent-color);
-            font-family: var(--font-body);
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1.5px;
             animation: latido 3s infinite;
         }
 
+        /* --- CONTADOR REUBICADO Y MEJORADO --- */
         #contador {
-            position: absolute;
-            bottom: 30px;
-            font-size: 1.2em;
-            font-weight: bold;
+            position: relative; /* Cambiado de absolute a relative para que fluya mejor */
+            margin-top: 20px;
+            font-size: 1.1em;
             z-index: 10;
-            background: rgba(255, 255, 255, 0.6);
-            padding: 15px 30px;
-            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.5);
+            padding: 12px 25px;
+            border-radius: 50px; /* Forma de píldora */
             border: 1px solid rgba(255, 255, 255, 0.8);
-            font-family: var(--font-body);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            display: inline-block;
         }
 
         .corazon {
@@ -144,7 +118,6 @@
             z-index: 2;
         }
 
-        /* Mensaje final especial con fuente manuscrita */
         #contenedor.final-message span {
             font-family: var(--font-script);
             font-size: 2.2em;
@@ -257,31 +230,25 @@
         const musica = document.getElementById("musicaFondo");
         const contenedorParticulas = document.getElementById("particulas");
         
-        // Inicializar el primer texto con animación
         contenedor.innerText = textos[i];
         contenedor.classList.add("texto-llegando");
 
         function siguiente() {
-            // Reproducir música en el primer toque
             if (!musicaIniciada) {
                 musica.play().catch(e => console.log("Música lista..."));
                 musicaIniciada = true;
             }
 
-            // Si está en medio de una animación o ya terminó, no hace nada
             if (animando || i >= textos.length - 1) return;
             animando = true;
             
-            // 1. El texto actual sale como una "hoja" de libro
             contenedor.classList.remove("hoja-actual", "texto-llegando");
             contenedor.classList.add("hoja-sale");
 
-            // 2. Esperamos a que termine de salir (500ms, más lento)
             setTimeout(() => {
                 i++;
                 let fraseActual = textos[i];
                 
-                // Preparamos para el mensaje final
                 if (i === textos.length - 1) {
                     contenedor.innerHTML = '<span>Te quiero mucho ❤️ Belén</span>';
                     contenedor.classList.add('final-message');
@@ -289,29 +256,24 @@
                     contenedor.innerText = fraseActual;
                 }
                 
-                // Preparamos el texto para que entre desde la derecha
                 contenedor.classList.remove("hoja-sale");
                 contenedor.classList.add("hoja-entra");
 
-                // Un pequeñísimo retraso para que el navegador registre la nueva posición
                 setTimeout(() => {
                     contenedor.classList.remove("hoja-entra");
                     contenedor.classList.add("hoja-actual", "texto-llegando");
                     
-                    // Si llegamos al final, cambiamos el texto de abajo
                     if(i === textos.length - 1){
                         indicacion.innerHTML = "<span>Nuestra historia apenas comienza ✨</span>";
                         indicacion.style.animation = "none";
                         indicacion.style.opacity = "1";
                     }
 
-                    // Liberamos el candado
                     setTimeout(() => { animando = false; }, 500);
                 }, 20);
             }, 500); 
         }
 
-        // --- CONTADOR ---
         const inicio = new Date("September 3, 2025 16:45:00").getTime();
         function actualizarContador() {
             const ahora = new Date().getTime();
@@ -320,19 +282,18 @@
             const horas = Math.floor((dif / (1000 * 60 * 60)) % 24);
             const minutos = Math.floor((dif / (1000 * 60)) % 60);
             const segundos = Math.floor((dif / 1000) % 60);
-            document.getElementById("contador").innerHTML = "Han pasado<br><strong>" + dias + " días</strong> " + horas + " hrs " + minutos + " min " + segundos + " seg<br>desde que comenzó nuestra historia";
+            document.getElementById("contador").innerHTML = "Llevamos: <strong>" + dias + "d " + horas + "h " + minutos + "m " + segundos + "s</strong>";
         }
         setInterval(actualizarContador, 1000);
         actualizarContador(); 
 
-        // --- CORAZONES Y PARTÍCULAS FLOTANTES ---
         function crearCorazon() {
             const corazon = document.createElement("div");
             corazon.classList.add("corazon");
             corazon.innerText = "❤️";
             corazon.style.left = Math.random() * 100 + "vw";
             corazon.style.fontSize = (15 + Math.random() * 25) + "px";
-            corazon.style.animationDuration = (6 + Math.random() * 4) + "s"; // Velocidad variable
+            corazon.style.animationDuration = (6 + Math.random() * 4) + "s";
             document.body.appendChild(corazon);
             setTimeout(() => { corazon.remove(); }, 8000);
         }
@@ -348,10 +309,9 @@
             setTimeout(() => { particula.remove(); }, 20000);
         }
 
-        // Creamos más corazones y partículas pero con tiempos variados
         setInterval(crearCorazon, 700);
-        for(let j=0; j<10; j++) crearParticula(); // Llenamos de partículas iniciales
-        setInterval(crearParticula, 2000); // Generamos nuevas poco a poco
+        for(let j=0; j<10; j++) crearParticula();
+        setInterval(crearParticula, 2000);
     </script>
 </body>
 </html>
