@@ -2,333 +2,356 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Comelón: Invasión de Fantasmas Gigantes</title>
+    <title>Nuestra Historia ❤️ Belén</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;700&family=Sacramento&display=swap" rel="stylesheet">
     <style>
-        body { margin: 0; padding: 0; background-color: #000; overflow: hidden; font-family: 'Courier New', Courier, monospace; }
-        canvas { display: block; }
-        
-        #ui {
-            position: absolute; top: 20px; left: 20px;
-            color: #fff; font-size: 20px; pointer-events: none;
-            text-shadow: 0 0 10px #fff;
-            line-height: 1.5;
+        :root {
+            /* Paleta de colores suaves y sofisticados */
+            --primary-bg: #fff8f8; /* Soft Blush/Pearl */
+            --secondary-bg: #ffe0e0; /* Champagne/Rosé */
+            --card-bg: rgba(255, 255, 255, 0.4); /* Glassmorphism card */
+            --text-color: #3d1f1f; /* Darker, softer Brown/Purple */
+            --accent-color: #ff8fa2; /* Soft Pink accents */
+            --font-body: 'Crimson Text', serif;
+            --font-script: 'Sacramento', cursive;
         }
 
-        .highlight-blue { color: #00ffff; text-shadow: 0 0 10px #00ffff; }
-        .highlight-green { color: #00ff00; text-shadow: 0 0 10px #00ff00; }
-
-        #overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95);
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 100; text-align: center;
+        body {
+            /* --- ESTAS DOS LÍNEAS QUITAN EL DESTELLO AZUL Y LA SELECCIÓN DE TEXTO --- */
+            -webkit-tap-highlight-color: transparent;
+            user-select: none; 
+            /* ------------------------------------------------------------------------ */
+            
+            margin: 0;
+            font-family: var(--font-body);
+            color: var(--text-color);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer; /* Indica que se puede interactuar */
+            background: linear-gradient(135deg, var(--primary-bg), var(--secondary-bg));
         }
 
-        #mensaje-final {
-            display: none;
-            position: fixed; top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center; z-index: 200;
-            background: rgba(20, 0, 0, 0.9);
-            padding: 40px; border: 3px solid #ff0055;
-            box-shadow: 0 0 50px #ff0055;
+        /* Partículas Mágicas detrás de la tarjeta */
+        #particulas {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            pointer-events: none; /* No bloquea clics */
         }
 
-        .titulo-muerte { color: #fff; font-size: 28px; font-weight: bold; margin-bottom: 15px; }
-        .causa { color: #ff0055; font-size: 32px; font-weight: 900; text-transform: uppercase; letter-spacing: 8px; animation: blink 0.5s infinite; }
-
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-
-        button {
-            background: transparent; border: 2px solid #fff; color: #fff;
-            padding: 15px 30px; font-size: 18px; cursor: pointer; font-family: inherit;
-            box-shadow: 0 0 15px #fff; transition: 0.3s; margin-top: 30px;
+        .particula {
+            position: absolute;
+            background: rgba(255, 143, 162, 0.3); /* Soft pink sparkles */
+            border-radius: 50%;
+            animation: flotarParticula 15s linear infinite;
         }
-        button:hover { background: #fff; color: #000; }
+
+        /* Tarjeta de Cristal refinada */
+        #tarjeta {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 30px;
+            padding: 60px 40px;
+            max-width: 650px;
+            width: 90%;
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 250px;
+            perspective: 1500px; /* Para efecto 3D en las hojas */
+            transition: transform 0.3s ease;
+        }
+
+        /* Animación suave al pasar el ratón por encima (feedback) */
+        #tarjeta:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Contenedor del texto con animación de hoja */
+        #contenedor {
+            font-size: 1.6em;
+            line-height: 1.8;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            transform-origin: left; /* Gira como un libro */
+        }
+
+        /* Estados de la animación de "hoja" */
+        .hoja-actual { 
+            opacity: 1; 
+            transform: rotateY(0deg) scale(1); 
+        }
+        .hoja-sale { 
+            opacity: 0; 
+            transform: rotateY(-90deg) scale(0.9); 
+        }
+        .hoja-entra { 
+            opacity: 0; 
+            transform: rotateY(90deg) scale(1.1); 
+        }
+
+        /* Animación de entrada para el nuevo texto (cada frase se forma) */
+        @keyframes formarFrase {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .texto-llegando {
+            animation: formarFrase 0.8s ease forwards;
+        }
+
+        #indicacion {
+            margin-top: 40px;
+            font-size: 0.9em;
+            opacity: 0.8;
+            color: var(--accent-color);
+            font-family: var(--font-body);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            animation: latido 3s infinite;
+        }
+
+        #contador {
+            position: absolute;
+            bottom: 30px;
+            font-size: 1.2em;
+            font-weight: bold;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.6);
+            padding: 15px 30px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            font-family: var(--font-body);
+        }
+
+        .corazon {
+            position: absolute;
+            color: #ff4757;
+            animation: flotar 8s linear infinite;
+            opacity: 0.8;
+            z-index: 2;
+        }
+
+        /* Mensaje final especial con fuente manuscrita */
+        #contenedor.final-message span {
+            font-family: var(--font-script);
+            font-size: 2.2em;
+            color: #d63031;
+        }
+
+        @keyframes flotarParticula {
+            from { transform: translateY(0) scale(1); opacity: 0; }
+            5% { opacity: 1; }
+            95% { opacity: 1; }
+            100% { transform: translateY(-100vh) scale(0.5); opacity: 0; }
+        }
+
+        @keyframes flotar {
+            0% { transform: translateY(100vh) scale(1) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1.5) rotate(360deg); opacity: 0; }
+        }
+
+        @keyframes latido {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.03); }
+        }
     </style>
 </head>
-<body>
+<body onclick="siguiente()">
 
-    <div id="overlay">
-        <h1 style="letter-spacing: 15px; color: #00ffcc; font-size: 60px; text-shadow: 0 0 20px #00ffcc;">COMELÓN</h1>
-        <p style="color: white;">¡Los fantasmas gigantes se mueven! Digiere para sobrevivir.</p>
-        <button onclick="iniciarJuego()">INICIAR SISTEMA</button>
-    </div>
+    <audio id="musicaFondo" loop>
+        <source src="cancion.mp3" type="audio/mpeg">
+    </audio>
 
-    <div id="mensaje-final">
-        <div class="titulo-muerte">HAS EXPLOTADO A TU CIEMPIÉS</div>
-        <div style="color: #aaa; margin-top: 15px; font-size: 14px;">REPORTE DE DAÑOS - CAUSA DE MUERTE:</div>
-        <div class="causa">OBESIDAD</div>
-        <div id="estadisticas-finales" style="color: white; margin-top: 20px;"></div>
-        <button onclick="location.reload()">REINTENTAR</button>
-    </div>
+    <div id="particulas"></div>
 
-    <div id="ui">
-        NIVEL BIO-MASA: <span id="score" class="highlight-blue">0</span> / 15<br>
-        DIGERIDOS: <span id="digeridos" class="highlight-green">0</span>
+    <div id="tarjeta">
+        <div id="contenedor" class="hoja-actual texto-llegando"></div>
+        <div id="indicacion">Toca para continuar 👆</div>
     </div>
     
-    <canvas id="canvas"></canvas>
+    <div id="contador"></div>
 
-<script>
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-const scoreEl = document.getElementById('score');
-const digeridosEl = document.getElementById('digeridos');
-const overlay = document.getElementById('overlay');
-const mensajeFinal = document.getElementById('mensaje-final');
+    <script>
+        const textos = [
+            "Todo empezó el 3 de septiembre de 2025, cuando te pedí el apunte de la clase de redacción.",
+            "En ese momento no sabía que ese pequeño momento iba a cambiar tantas cosas.",
+            "Mientras me explicabas, no podía evitar fijarme en ti… en tu carita, en tus manos, y en tu voz.",
+            "Tal vez solo fue una excusa para hablar contigo, pero me alegra mucho que lo haya hecho.",
+            "Después de ese día me gustaba saber que existías en mi mundo.",
+            "Y que cuando te sonreía, tú también me sonreías.",
+            "Fuiste tú quien empezó a acercarse más.",
+            "Cuando dijiste que no había preguntado tu nombre y que querías saber el mío, me dio mucha alegría.",
+            "Por primera vez hablamos de cosas que no eran solo de la escuela.",
+            "Y ese día me quedé pensando mucho en lo que había pasado.",
+            "Después coincidimos otra vez… y recuerdo muy bien tu vestido rosa con flores.",
+            "Cada vez hablábamos más.",
+            "En la biblioteca me preguntaste mi número, te di mi teléfono y te agregaste a mis contactos *Belén*.",
+            "Desde ahí empezamos a compartir más tiempo juntos.",
+            "Hubo un día en el que te recargaste en mí.",
+            "Tal vez fue algo normal para ti o así lo sentí, pero para mí fue un momento que disfruté mucho.",
+            "Después dejamos de vernos por un buen rato.",
+            "Pero empezamos a hablar por mensajes, por las noches jugábamos y platicábamos.",
+            "Aunque solo éramos amigos, ya sentía que eras especial.",
+            "Después volvimos a vernos y por los nervios solo pude decirte que tus tenis estaban bonitos, cosa que también es verdad.",
+            "Fuimos por un café… aunque lo importante realmente fue caminar contigo.",
+            "Y sentir por primera vez que me tomabas del brazo.",
+            "Cada vez que te veía pensaba que estabas más bonita que el día anterior.",
+            "Se acercaba navidad y recuerdo con cariño el abrazo con el que nos despedimos ese día que fuimos por primera vez a Perisur.",
+            "Después salimos otra vez…",
+            "Y ese día nos tomamos de la mano por primera vez ❤️.",
+            "Cuando me abrazaste no quería que ese momento terminara.",
+            "Pasó navidad, pasó año nuevo…",
+            "Y luego llegó el picnic.",
+            "Conocer a tu perrita y verte hablarle me dio mucha ternura.",
+            "Caminar contigo por Chapultepec fue un momento que nunca voy a olvidar.",
+            "Y cuando vi que habías preparado fresas y pay de queso… ese detalle se quedó guardado en mi memoria.",
+            "Después regresamos a la escuela.",
+            "Y sentí que todo era una montaña de emociones.",
+            "Hubo un día en que por fin me quité la pena y te abracé.",
+            "Te cargué, te hice cosquillas…",
+            "Y tú dijiste que ojalá existiera un control para detener el tiempo.",
+            "Después llegó el 14 de febrero.",
+            "Yo estaba nervioso y pensaba muchas cosas.",
+            "Cuando me pediste leer tu carta no sabía qué esperar.",
+            "Pero cuando entendí que lo decías en serio… me sentí muy feliz.",
+            "Porque descubrí que lo que sentía por ti también existía en tu corazón.",
+            "Disfruté mucho ese camino abrazándote.",
+            "Y sentir tu manita con la mía.",
+            "Antes de llegar a tu casa quería besarte…",
+            "Y aunque fue un momento un poco torpe… fue nuestro primer beso.",
+            "Y ese momento confirmó algo muy importante para mí.",
+            "Que eres alguien muy especial en mi vida.",
+            "Después llegó el lunes.",
+            "El lunes en que me llevaste una gelatina.",
+            "El lunes en que te pedí que fueras mi novia.",
+            "Y hoy…",
+            "Hoy se cumple un mes desde ese día.",
+            "Un mes lleno de momentos, risas, mensajes y recuerdos.",
+            "Gracias por existir.",
+            "Gracias por aceptarme en tu vida.",
+            "Y gracias por cada momento que hemos compartido.",
+            "Te quiero mucho, Belén ❤️"
+        ];
 
-let width, height;
-let mouse = { x: 0, y: 0 };
-let head = { x: 0, y: 0 };
-let score = 0; 
-let totalDigeridos = 0;
-let juegoIniciado = false;
-let estado = "jugando"; 
-let factorGordo = 1;
-let particulas = [];
-let hueBase = 0;
-
-const segmentos = [];
-const distanciaSegmentos = 6;
-const numSegmentosMinimo = 40;
-
-const fantasmas = [];
-const refrescos = [];
-const coloresFantasmas = ['#FF0000', '#FFB8FF', '#00FFFF', '#FFB852'];
-
-function iniciarJuego() {
-    overlay.style.display = 'none';
-    juegoIniciado = true;
-    animate();
-}
-
-window.addEventListener('resize', resize);
-window.addEventListener('mousemove', e => {
-    mouse.x = e.clientX;
-    mouse.y = e.clientY;
-});
-
-function resize() {
-    width = canvas.width = window.innerWidth;
-    height = canvas.height = window.innerHeight;
-}
-
-class Refresco {
-    constructor() { this.spawn(); }
-    spawn() {
-        this.x = Math.random() * (width - 100) + 50;
-        this.y = Math.random() * (height - 100) + 50;
-        this.vx = (Math.random() - 0.5) * 8;
-        this.vy = (Math.random() - 0.5) * 8;
-        this.alive = true;
-    }
-    update() {
-        if (!this.alive) return;
-        this.x += this.vx; this.y += this.vy;
-        if (this.x < 15 || this.x > width - 15) this.vx *= -1;
-        if (this.y < 15 || this.y > height - 15) this.vy *= -1;
-    }
-    draw() {
-        if (!this.alive) return;
-        ctx.save();
-        ctx.fillStyle = "#00ff00";
-        ctx.shadowBlur = 20; ctx.shadowColor = "#00ff00";
-        ctx.fillRect(this.x - 12, this.y - 18, 24, 36);
-        ctx.fillStyle = "#fff";
-        ctx.font = "bold 12px Arial";
-        ctx.fillText("SODA", this.x - 17, this.y + 5);
-        ctx.restore();
-    }
-}
-
-class Fantasma {
-    constructor() { this.spawn(); }
-    spawn() {
-        this.x = Math.random() * (width - 100) + 50;
-        this.y = Math.random() * (height - 100) + 50;
-        this.vx = (Math.random() - 0.5) * 4; // Movimiento del fantasma
-        this.vy = (Math.random() - 0.5) * 4;
-        this.color = coloresFantasmas[Math.floor(Math.random() * coloresFantasmas.length)];
-        this.size = 20; // 130% aproximadamente (de 15 a 20)
-        this.alive = true;
-    }
-    update() {
-        if (!this.alive) return;
-        this.x += this.vx; this.y += this.vy;
-        if (this.x < this.size || this.x > width - this.size) this.vx *= -1;
-        if (this.y < this.size || this.y > height - this.size) this.vy *= -1;
-    }
-    draw() {
-        if (!this.alive) return;
-        ctx.save();
-        ctx.shadowBlur = 15; ctx.shadowColor = this.color;
-        ctx.fillStyle = this.color;
-        ctx.beginPath();
-        // Cabeza gigante
-        ctx.arc(this.x, this.y, this.size, Math.PI, 0);
-        ctx.lineTo(this.x + this.size, this.y + 25);
-        ctx.lineTo(this.x - this.size, this.y + 25);
-        ctx.fill();
+        let i = 0;
+        let animando = false;
+        let musicaIniciada = false;
         
-        // Ojos proporcionales
-        ctx.fillStyle = "white";
-        ctx.beginPath();
-        ctx.arc(this.x - 8, this.y - 4, 6, 0, Math.PI * 2);
-        ctx.arc(this.x + 8, this.y - 4, 6, 0, Math.PI * 2);
-        ctx.fill();
+        const contenedor = document.getElementById("contenedor");
+        const indicacion = document.getElementById("indicacion");
+        const musica = document.getElementById("musicaFondo");
+        const contenedorParticulas = document.getElementById("particulas");
         
-        ctx.fillStyle = "black";
-        ctx.beginPath();
-        ctx.arc(this.x - 8, this.y - 4, 3, 0, Math.PI * 2);
-        ctx.arc(this.x + 8, this.y - 4, 3, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-    }
-}
+        // Inicializar el primer texto con animación
+        contenedor.innerText = textos[i];
+        contenedor.classList.add("texto-llegando");
 
-class Segmento {
-    constructor(x, y, index) {
-        this.x = x; this.y = y;
-        this.index = index;
-        this.angle = 0;
-        this.currentHue = 0;
-    }
-    update(targetX, targetY) {
-        if (estado === "explotado") return;
-        const dx = targetX - this.x;
-        const dy = targetY - this.y;
-        this.angle = Math.atan2(dy, dx);
-        this.x = targetX - Math.cos(this.angle) * distanciaSegmentos;
-        this.y = targetY - Math.sin(this.angle) * distanciaSegmentos;
-    }
-    draw() {
-        const hue = (hueBase + (this.index * 6)) % 360;
-        this.currentHue = hue;
-        ctx.save();
-        let shake = estado === "inflando" ? (Math.random() - 0.5) * factorGordo * 10 : 0;
-        ctx.translate(this.x + shake, this.y + shake);
-        ctx.rotate(this.angle);
-        ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
-        ctx.lineWidth = 2.5;
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = `hsl(${hue}, 100%, 50%)`;
-
-        const baseSize = Math.max(5, 18 - (this.index * 0.1)); 
-        const size = baseSize * factorGordo;
-        
-        ctx.beginPath();
-        ctx.moveTo(0, -size); ctx.lineTo(0, size);
-        ctx.stroke();
-
-        if (this.index % 3 === 0) {
-            const t = Date.now() * 0.01 + this.index;
-            const move = Math.sin(t) * 8;
-            ctx.beginPath();
-            ctx.moveTo(0, size);
-            ctx.lineTo(-15 * factorGordo, (size + 15 + move) * factorGordo);
-            ctx.moveTo(0, -size);
-            ctx.lineTo(-15 * factorGordo, -(size + 15 + move) * factorGordo);
-            ctx.stroke();
-        }
-
-        if (this.index === 0) {
-            ctx.beginPath(); ctx.arc(6, 0, 10 * factorGordo, 0, Math.PI * 2); ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(8, -5); ctx.lineTo(20 * factorGordo, -15 * factorGordo);
-            ctx.moveTo(8, 5); ctx.lineTo(20 * factorGordo, 15 * factorGordo); ctx.stroke();
-        }
-        ctx.restore();
-    }
-}
-
-resize();
-head.x = width/2; head.y = height/2;
-for (let i = 0; i < numSegmentosMinimo; i++) {
-    segmentos.push(new Segmento(head.x, head.y, i));
-}
-for (let i = 0; i < 5; i++) fantasmas.push(new Fantasma());
-for (let i = 0; i < 2; i++) refrescos.push(new Refresco());
-
-function animate() {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.4)";
-    ctx.fillRect(0, 0, width, height);
-    hueBase += 3;
-
-    if (estado !== "explotado") {
-        if (estado === "jugando") {
-            head.x += (mouse.x - head.x) * 0.15;
-            head.y += (mouse.y - head.y) * 0.15;
-        } else if (estado === "inflando") {
-            factorGordo += 0.08;
-            if (factorGordo > 8) reventar();
-        }
-
-        // Fantasmas actualización y colisión
-        fantasmas.forEach(f => {
-            if (!f.alive || estado === "inflando") return;
-            f.update();
-            f.draw();
-            if (Math.hypot(head.x - f.x, head.y - f.y) < 35) {
-                f.alive = false;
-                score++;
-                scoreEl.innerText = score;
-                for(let j=0; j<15; j++) {
-                    segmentos.push(new Segmento(segmentos[segmentos.length-1].x, segmentos[segmentos.length-1].y, segmentos.length));
-                }
-                if (score >= 15) estado = "inflando";
-                else setTimeout(() => f.spawn(), 1500);
+        function siguiente() {
+            // Reproducir música en el primer toque
+            if (!musicaIniciada) {
+                musica.play().catch(e => console.log("Música lista..."));
+                musicaIniciada = true;
             }
-        });
 
-        // Refrescos actualización y colisión
-        refrescos.forEach(r => {
-            if (!r.alive || estado === "inflando") return;
-            r.update(); r.draw();
-            if (Math.hypot(head.x - r.x, head.y - r.y) < 35) {
-                r.alive = false;
-                if (score > 0) {
-                    let cant = Math.min(score, 2);
-                    score -= cant;
-                    totalDigeridos += cant;
-                    scoreEl.innerText = score;
-                    digeridosEl.innerText = totalDigeridos;
+            // Si está en medio de una animación o ya terminó, no hace nada
+            if (animando || i >= textos.length - 1) return;
+            animando = true;
+            
+            // 1. El texto actual sale como una "hoja" de libro
+            contenedor.classList.remove("hoja-actual", "texto-llegando");
+            contenedor.classList.add("hoja-sale");
+
+            // 2. Esperamos a que termine de salir (500ms, más lento)
+            setTimeout(() => {
+                i++;
+                let fraseActual = textos[i];
+                
+                // Preparamos para el mensaje final
+                if (i === textos.length - 1) {
+                    contenedor.innerHTML = '<span>Te quiero mucho ❤️ Belén</span>';
+                    contenedor.classList.add('final-message');
+                } else {
+                    contenedor.innerText = fraseActual;
                 }
-                for(let j=0; j<35; j++) { 
-                    if(segmentos.length > numSegmentosMinimo) segmentos.pop(); 
-                }
-                setTimeout(() => r.spawn(), 4000);
-            }
-        });
+                
+                // Preparamos el texto para que entre desde la derecha
+                contenedor.classList.remove("hoja-sale");
+                contenedor.classList.add("hoja-entra");
 
-        let tx = head.x, ty = head.y;
-        segmentos.forEach(seg => {
-            seg.update(tx, ty); seg.draw();
-            tx = seg.x; ty = seg.y;
-        });
-    } else {
-        particulas.forEach((p, i) => {
-            p.x += p.vx; p.y += p.vy; p.life -= 0.02;
-            ctx.fillStyle = p.color; ctx.globalAlpha = p.life;
-            ctx.fillRect(p.x, p.y, 4, 4);
-            if(p.life <= 0) particulas.splice(i, 1);
-        });
-    }
-    requestAnimationFrame(animate);
-}
+                // Un pequeñísimo retraso para que el navegador registre la nueva posición
+                setTimeout(() => {
+                    contenedor.classList.remove("hoja-entra");
+                    contenedor.classList.add("hoja-actual", "texto-llegando");
+                    
+                    // Si llegamos al final, cambiamos el texto de abajo
+                    if(i === textos.length - 1){
+                        indicacion.innerHTML = "<span>Nuestra historia apenas comienza ✨</span>";
+                        indicacion.style.animation = "none";
+                        indicacion.style.opacity = "1";
+                    }
 
-function reventar() {
-    estado = "explotado";
-    document.getElementById('estadisticas-finales').innerHTML = `Lograste digerir <b>${totalDigeridos}</b> fantasmas.`;
-    segmentos.forEach(seg => {
-        for(let i=0; i<15; i++) {
-            particulas.push({
-                x: seg.x, y: seg.y, vx: (Math.random()-0.5)*35, vy: (Math.random()-0.5)*35,
-                color: `hsl(${seg.currentHue}, 100%, 50%)`, life: 1.0
-            });
+                    // Liberamos el candado
+                    setTimeout(() => { animando = false; }, 500);
+                }, 20);
+            }, 500); 
         }
-    });
-    setTimeout(() => { mensajeFinal.style.display = 'block'; }, 800);
-}
-</script>
+
+        // --- CONTADOR ---
+        const inicio = new Date("September 3, 2025 16:45:00").getTime();
+        function actualizarContador() {
+            const ahora = new Date().getTime();
+            const dif = ahora - inicio;
+            const dias = Math.floor(dif / (1000 * 60 * 60 * 24));
+            const horas = Math.floor((dif / (1000 * 60 * 60)) % 24);
+            const minutos = Math.floor((dif / (1000 * 60)) % 60);
+            const segundos = Math.floor((dif / 1000) % 60);
+            document.getElementById("contador").innerHTML = "Han pasado<br><strong>" + dias + " días</strong> " + horas + " hrs " + minutos + " min " + segundos + " seg<br>desde que comenzó nuestra historia";
+        }
+        setInterval(actualizarContador, 1000);
+        actualizarContador(); 
+
+        // --- CORAZONES Y PARTÍCULAS FLOTANTES ---
+        function crearCorazon() {
+            const corazon = document.createElement("div");
+            corazon.classList.add("corazon");
+            corazon.innerText = "❤️";
+            corazon.style.left = Math.random() * 100 + "vw";
+            corazon.style.fontSize = (15 + Math.random() * 25) + "px";
+            corazon.style.animationDuration = (6 + Math.random() * 4) + "s"; // Velocidad variable
+            document.body.appendChild(corazon);
+            setTimeout(() => { corazon.remove(); }, 8000);
+        }
+
+        function crearParticula() {
+            const particula = document.createElement("div");
+            particula.classList.add("particula");
+            particula.style.width = particula.style.height = (2 + Math.random() * 4) + "px";
+            particula.style.left = Math.random() * 100 + "vw";
+            particula.style.top = Math.random() * 100 + "vh";
+            particula.style.animationDuration = (10 + Math.random() * 10) + "s";
+            contenedorParticulas.appendChild(particula);
+            setTimeout(() => { particula.remove(); }, 20000);
+        }
+
+        // Creamos más corazones y partículas pero con tiempos variados
+        setInterval(crearCorazon, 700);
+        for(let j=0; j<10; j++) crearParticula(); // Llenamos de partículas iniciales
+        setInterval(crearParticula, 2000); // Generamos nuevas poco a poco
+    </script>
 </body>
 </html>
